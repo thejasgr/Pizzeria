@@ -1,0 +1,30 @@
+{
+  "name": "mean_stackapp",
+  "version": "1.0.0",
+  "description": "MEAN Stack App",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.4",
+    "jslint": "^0.12.0",
+    "mongodb": "^3.1.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thejasgr/MEAN_StackApp.git"
+  },
+  "keywords": [
+    "MeanStack"
+  ],
+  "author": "Thejas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thejasgr/MEAN_StackApp/issues"
+  },
+  "homepage": "https://github.com/thejasgr/MEAN_StackApp#readme"
+}
