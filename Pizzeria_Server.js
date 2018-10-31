@@ -3,8 +3,7 @@ var express = require('express');
 var bodyParser = require('body-parser')
 var app = express();
 var mongodb = require('mongodb');
-var jsonParser = bodyParser.json();
-var cors = require('cors');
+/* var jsonParser = bodyParser.json(); */
 
 
 var dbName = 'Pizzeria_database';
@@ -12,9 +11,11 @@ var db = null;
 var mongoClient = mongodb.MongoClient;
 const url = "mongodb://localhost:27017";
 
-app.use(cors({
-    origin: 'localhost:4200'
-}));
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 function dbOperation(res, flagValue) {
     mongoClient.connect(url, function (err, client) {
@@ -54,7 +55,7 @@ function getPizzaDetails(res) {
 
 function getIngredientsDetails(res) {
     console.log('in function');
-    if (db !== null) {
+    if (db != null) {
         db.collection('ingredients').find({}).toArray
             (
             function (err, result) {
@@ -71,11 +72,11 @@ function getIngredientsDetails(res) {
     }
 }
 
-app.get('/getpizza', jsonParser, function (req, res) {
+app.get('/getpizza', function (req, res) {
     dbOperation(res, 'getPizzaDetails');
 });
 
-app.get('/getingredients', jsonParser, function (req, res) {
+app.get('/getingredients', function (req, res) {
     dbOperation(res, 'getIngredientsDetails');
 });
 
