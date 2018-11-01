@@ -14,4 +14,7 @@ export class HttpService {
   getingredientsinfo() {
     return this.httpclient.get(this.url + 'getingredients');
   }
+  addToCart(body) {
+    return this.httpclient.post(this.url + 'addToCart', body);
+  }
 }

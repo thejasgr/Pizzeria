@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../http.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -15,26 +16,32 @@ export class PizzaOrderComponent implements OnInit {
   topping: [];
   price;
   type;
-  pizzaArray;
+  pizzaArray = new Array();
+  ingredientsArray;
+  pizzaCounter = new Array();
+  totalPizza: number;
 
 
-  constructor(private getpizza: HttpService) { }
+  constructor(private pizza: HttpService, private router: Router) { }
 
   ngOnInit() {
-    this.getpizza.getpizzainfo().subscribe((res) => {
+    this.pizza.getpizzainfo().subscribe((res: []) => {
       this.pizzaArray = res;
+      this.pizza.getingredientsinfo().subscribe((resp) => {
+        this.ingredientsArray = resp;
+      });
       console.log(res);
-      /*   this.pizzaArray.forEach((element: any) => {
-          this.name = element.name;
-          this.type = element.type;
-          this.img = element.image;
-          this.description = element.description;
-          this.ingredients = element.ingredients;
-          this.topping = element.topping;
-          this.price = element.price;
-      }); */
+      res.forEach(element => {
+        this.pizzaCounter.push(0);
+      });
 
     });
+  }
+  addToCart(index, id) {
+    this.pizza.addToCart(id).subscribe((res) => {
+
+    });
+    this.router.navigate(['ShoppingCart']);
   }
 
 }

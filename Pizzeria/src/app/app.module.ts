@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AppComponent } from './app.component';
 import { HomeScreenComponent } from './home-screen/home-screen.component';
@@ -22,7 +23,7 @@ import { HttpService } from './http.service';
     CartComponent,
   ],
   imports: [
-    BrowserModule, BrowserAnimationsModule, MatCardModule, FormsModule, HttpClientModule, RouterModule.forRoot(
+    BrowserModule, BrowserAnimationsModule, MatCheckboxModule, MatCardModule, FormsModule, HttpClientModule, RouterModule.forRoot(
       [
         {
           path: '', component: HomeScreenComponent
@@ -31,7 +32,7 @@ import { HttpService } from './http.service';
           path: 'OrderPizza', component: PizzaOrderComponent
         },
         {
-          path: 'BuildUrPizza', component: BuildUrPizzaComponent
+          path: 'Customize', component: BuildUrPizzaComponent
         },
         {
           path: 'ShoppingCart', component: CartComponent
