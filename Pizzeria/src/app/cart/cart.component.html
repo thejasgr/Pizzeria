@@ -1,7 +1,28 @@
 <div class="container">
   <ng-container *ngIf="isEmpty; else elseTemplate">
-    <img src="/assets/emptyCart1.png" class="img-responsive center" alt="Cart is empty">
+    <img src="/assets/emptyCart.png" class="img-responsive center" alt="Cart is empty">
   </ng-container>
   <ng-template #elseTemplate>
+    <div class="row">
+      <div *ngFor="let item of displaycart; let i=index" class="col-sm-12">
+        <mat-card>
+          <div class="row">
+            <div class='col-sm-3'>
+              <mat-card-header>
+                <mat-card-title>
+                  <h3> Name:</h3>
+                  {{item.name}} <br>
+                </mat-card-title>
+                <div col-sm-6>
+
+                  <img class="img-responsive" style="height:300px;width:300px;" src={{item.image}} /><br>
+
+                </div>
+              </mat-card-header>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
   </ng-template>
 </div>

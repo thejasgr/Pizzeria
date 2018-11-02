@@ -1,9 +1,9 @@
 /*jslint node*/
-var express = require('express');
-var bodyParser = require('body-parser')
-var app = express();
-var mongodb = require('mongodb');
-/* var jsonParser = bodyParser.json(); */
+const express = require('express');
+const bodyParser = require('body-parser')
+const app = express();
+const mongodb = require('mongodb');
+const jsonParser = bodyParser.json();
 
 
 var dbName = 'Pizzeria_database';
@@ -17,7 +17,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-function dbOperation(res, flagValue) {
+function dbOperation(req, res, flagValue) {
     mongoClient.connect(url, function (err, client) {
         if (err) {
             console.log('Unable to connect:' + err);
@@ -28,10 +28,28 @@ function dbOperation(res, flagValue) {
                 getPizzaDetails(res);
             } else if (flagValue == 'getIngredientsDetails') {
                 getIngredientsDetails(res);
+            } else if (flagValue == 'addToCart') {
+                addToCart(req, res);
+            } else if (flagValue == 'getCart') {
+                getCart(res);
             }
 
         }
     });
+}
+function getCart(res) {
+    if (db != null) {
+        db.collection('cart').find({}).toArray(function (err, result) {
+            if (err) {
+                console.log('error' + err);
+            } else {
+                console.log(result);
+                res.send(JSON.stringify(result));
+                console.log('Successful get cart request');
+
+            }
+        });
+    }
 }
 
 function getPizzaDetails(res) {
@@ -43,7 +61,6 @@ function getPizzaDetails(res) {
                     console.log('error' + err);
                 }
                 else {
-                    console.log('data' + JSON.stringify(result));
                     res.send(JSON.stringify(result));
                     console.log('Successful get pizza request');
 
@@ -63,7 +80,6 @@ function getIngredientsDetails(res) {
                     console.log('error' + err);
                 }
                 else {
-                    console.log('data' + JSON.stringify(result));
                     res.send(JSON.stringify(result));
                     console.log('Successful get ingredients request');
                 }
@@ -72,12 +88,31 @@ function getIngredientsDetails(res) {
     }
 }
 
+function addToCart(req, res) {
+    if (db != null) {
+        db.collection('cart').insertOne({ 'pizzaid': req.body.pizzaid, 'ingredients': req.body.ingredients });
+        const result = { status: true, msg: 'post successful' };
+        res.send(result);
+    } else {
+        const result = { status: flase, msg: 'post unsuccessful' };
+        res.send(result);
+    }
+}
+
 app.get('/getpizza', function (req, res) {
-    dbOperation(res, 'getPizzaDetails');
+    dbOperation(req, res, 'getPizzaDetails');
 });
 
 app.get('/getingredients', function (req, res) {
-    dbOperation(res, 'getIngredientsDetails');
+    dbOperation(req, res, 'getIngredientsDetails');
 });
+
+app.post('/addToCart', jsonParser, function (req, res) {
+    dbOperation(req, res, 'addToCart');
+})
+
+app.get('/getCart', function (req, res) {
+    dbOperation(req, res, 'getCart');
+})
 
 app.listen(3000, () => console.log('Server listening on port 3000'));

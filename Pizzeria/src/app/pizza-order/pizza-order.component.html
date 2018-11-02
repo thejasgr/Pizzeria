@@ -1,6 +1,6 @@
 <div class="row">
     <div *ngFor="let item of pizzaArray; let i=index" class="col-sm-6">
-        <mat-card style="height:655px">
+        <mat-card>
             <div class=" row">
                 <div class='col-sm-3'>
                     <mat-card-header>
@@ -34,15 +34,15 @@
                 <div class="col-sm-6">
                     <img class="img-responsive" style="height:300px;width:300px;" src={{item.image}} /><br>
                     <mat-card-actions>
-                        <button (click)="addToCart(i,item.id)" class="btn btn-success col-sm-12">Add</button><br>
+                        <button (click)="addToCart(item.id)" class="btn btn-success col-sm-12">Add</button><br>
                     </mat-card-actions>
                 </div>
             </div>
             <div class="row">
-                <div *ngFor="let item of ingredientsArray; let i=index">
+                <div *ngFor="let element of ingredientsArray; let i=index">
                     <mat-card-content>
                         <div class="checkbox col-sm-2">
-                            <input type="checkbox">{{item.tname}}
+                            <input type="checkbox" (change)="addToOrder($event.target.checked,item.id,element.id)">{{element.tname}}
                         </div>
                     </mat-card-content>
                 </div>
@@ -50,3 +50,5 @@
         </mat-card>
     </div>
 </div>
+<br>
+<button type="button" class="btn btn-success pull-right" (click)="routeToCart()">Go to Cart</button>
