@@ -1,5 +1,5 @@
 <div class="row">
-    <div *ngFor="let item of pizzaArray; let i=index" class="col-sm-6">
+    <div *ngFor="let item of pizzaArray; let i=index;" class="col-sm-6">
         <mat-card>
             <div class=" row">
                 <div class='col-sm-3'>
@@ -34,6 +34,9 @@
                 <div class="col-sm-6">
                     <img class="img-responsive" style="height:300px;width:300px;" src={{item.image}} /><br>
                     <mat-card-actions>
+                        <button class="btn btn-danger col-sm-1" (click)="quantDecrease(item.id)">-</button>{{countArray[i]}}
+                        <button class="btn btn-success col-sm-1" (click)="quantIncrease(item.id)">+</button><br>
+
                         <button (click)="addToCart(item.id)" class="btn btn-success col-sm-12">Add</button><br>
                     </mat-card-actions>
                 </div>

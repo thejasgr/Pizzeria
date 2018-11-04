@@ -30,11 +30,15 @@ export class PizzaOrderComponent implements OnInit {
   quantArray = new Array();
 
 
+
   constructor(private pizza: HttpService, private router: Router) { }
 
   ngOnInit() {
     this.pizza.getpizzainfo().subscribe((res: []) => {
       this.pizzaArray = res;
+      for (let i = 0; i < this.pizzaArray.length; i++) {
+        this.countArray[i] = 1;
+      }
       /*     res.forEach(e => {
             this.orderArray.push(this.count);
             ++this.count;
@@ -44,15 +48,20 @@ export class PizzaOrderComponent implements OnInit {
       this.ingredientsArray = resp;
     });
 
+    console.log(this.countArray);
+
 
   }
   addToCart(pizzaid) {
-    this.pizza.addToCart(pizzaid, this.ingredienttopping[pizzaid - 1], this.addonArray[pizzaid - 1], this.totalArray[pizzaid - 1]).subscribe((res1) => {
+    var totalAddOnPrice = this.addonArray[pizzaid - 1] * this.countArray[pizzaid - 1];
+    var totalBasePrice = this.totalArray[pizzaid - 1] * this.countArray[pizzaid - 1];
+
+    this.pizza.addToCart(pizzaid, this.ingredienttopping[pizzaid - 1], totalAddOnPrice, totalBasePrice).subscribe((res1) => {
       console.log(res1);
     });
 
   }
-  addToOrder(status, pizzaid, ingid, price) {
+  addToOrder(status, pizzaid, ingName, price) {
     /*  if (this.OrderArray.length == 0 && event.target.checked) {
        this.OrderArray.push(pizzaname);
        this.OrderArray.push(ingname);
@@ -72,7 +81,6 @@ export class PizzaOrderComponent implements OnInit {
         this.ingredienttopping.push([]);
         this.addonArray[i] = 0;
         this.totalArray[i] = this.pizzaArray[i].price;
-        this.countArray[i] = 1;
 
       }
       console.log(this.orderArray);
@@ -82,23 +90,35 @@ export class PizzaOrderComponent implements OnInit {
     console.log(index);
     if (status) {
       // this.total=basePrice+this.total+this.price;
-      if (!(this.ingredienttopping[index].includes(ingid))) {
-        this.ingredienttopping[index].push(ingid);
+      if (!(this.ingredienttopping[index].includes(ingName))) {
+        this.ingredienttopping[index].push(ingName);
         this.addonArray[index] += price;
-        this.totalArray[index] += price;
+        // this.totalArray[index] += price;
       }
       console.log(this.ingredienttopping);
     } else {
-      if (this.ingredienttopping[index].includes(ingid)) {
+      if (this.ingredienttopping[index].includes(ingName)) {
         this.ingredienttopping[index].splice(index, 1);
         this.addonArray[index] -= price;
-        this.totalArray[index] -= price;
+        // this.totalArray[index] -= price;
       }
     }
   }
 
   routeToCart() {
     this.router.navigate(['ShoppingCart']);
+  }
+  quantIncrease(pizzId) {
+    console.log(pizzId);
+    this.countArray[pizzId - 1]++;
+  }
+
+  quantDecrease(pizzId) {
+    console.log(pizzId);
+    if (this.countArray[pizzId - 1] > 1) {
+      this.countArray[pizzId - 1]--;
+    }
+
   }
 
 }
