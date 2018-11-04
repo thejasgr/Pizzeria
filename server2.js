@@ -113,24 +113,58 @@ function addToCart(req, res) {
             else {
                 console.log("working");
                 console.log(typeof (req.body.id));
+                db.collection('cart').find({ 'id': pizzaId, }).toArray(function (err, result) {
+                    if (err) {
+                        res.send(err);
+                    } else {
+                        if (result.length == 0) {
+                            console.log(result[0])
+                            db.collection('cart').insertOne({
+                                "id": result[0].id,
+                                "type": result[0].type,
+                                "price": result[0].price,
+                                "name": result[0].name,
+                                "image": result[0].image,
+                                "description": result[0].description,
+                                "ingredients": result[0].ingredients,
+                                "topping": result[0].topping.sort(1),
+                                "quant": 1,
+                                "addOns": req.body.topping.sort(1),
+                                "addOnPrice": req.body.addOnPrice,
+                                "total": req.body.total
+                            });
+                            console.log('inserted in cart');
+                            var msg = { status: true, msg: "Registered" }
+                            res.send(msg);
 
-                db.collection('cart').insertOne({
-                    "id": result[0].id,
-                    "type": result[0].type,
-                    "price": result[0].price,
-                    "name": result[0].name,
-                    "image": result[0].image,
-                    "description": result[0].description,
-                    "ingredients": result[0].ingredients,
-                    "topping": result[0].topping.sort(1),
-                    "quant": 1,
-                    "addOns": req.body.topping,
-                    "addOnPrice": req.body.addOnPrice,
-                    "total": req.body.total
-                });
-                console.log('inserted in cart');
-                var msg = { status: true, msg: "Registered" }
-                res.send(msg);
+                        } else {
+                            for (const iterator of result) {
+                                if (iterator.id == pizzaId && iterator.addOns == req.body.topping.sort(1)) {
+                                    db.collection('cart').update({ id: pizzaId }, { $set: { quant: result[0].quant + 1 } })
+                                }
+                            }
+
+                        }
+                    }
+                })
+
+                // db.collection('cart').insertOne({
+                //     "id": result[0].id,
+                //     "type": result[0].type,
+                //     "price": result[0].price,
+                //     "name": result[0].name,
+                //     "image": result[0].image,
+                //     "description": result[0].description,
+                //     "ingredients": result[0].ingredients,
+                //     "topping": result[0].topping.sort(1),
+                //     "quant": 1,
+                //     "addOns": req.body.topping,
+                //     "addOnPrice": req.body.addOnPrice,
+                //     "total": req.body.total
+                // });
+                // console.log('inserted in cart');
+                // var msg = { status: true, msg: "Registered" }
+                // res.send(msg);
             }
         })
     }

@@ -42,7 +42,7 @@
                 <div *ngFor="let element of ingredientsArray; let i=index">
                     <mat-card-content>
                         <div class="checkbox col-sm-2">
-                            <input type="checkbox" (change)="addToOrder($event.target.checked,item.id,element.id)">{{element.tname}}
+                            <input type="checkbox" (change)="addToOrder($event.target.checked,item.id,element.tname ,element.price)">{{element.tname}}
                         </div>
                     </mat-card-content>
                 </div>

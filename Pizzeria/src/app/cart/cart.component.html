@@ -1,4 +1,4 @@
-<div class="container">
+<!-- <div class="container">
   <ng-container *ngIf="isEmpty; else elseTemplate">
     <img src="/assets/emptyCart.png" class="img-responsive center" alt="Cart is empty">
   </ng-container>
@@ -13,16 +13,59 @@
                   <h3> Name:</h3>
                   {{item.name}} <br>
                 </mat-card-title>
+                <mat-card-subtitle>
+                  <div>
+                      <div *ngIf="item.type=='veg'; else elseBlock">
+                          <img class="img-responsive" src="/assets/green.png" width="30" height="30" alt="Veg"></div>
+                      <ng-template #elseBlock>
+                          <img class="img-responsive" src="/assets/red.png" width="30" height="30" alt="Non-Veg">
+                      </ng-template>
+                  </div>
+                  <h3>Price:</h3>
+                  {{item.price}}<br>
+              </mat-card-subtitle>
                 <div col-sm-6>
-
                   <img class="img-responsive" style="height:300px;width:300px;" src={{item.image}} /><br>
-
                 </div>
               </mat-card-header>
             </div>
+            <div class="col-sm-3">
+              <mat-card-content>
+                  {{item.description}}<br>
+                  <h3>Ingredients:</h3>
+                  {{item.ingredients}} <br>
+                  <h3>Toppings:</h3><br>
+                  {{item.topping}}
+              </mat-card-content>
+          </div>
           </div>
         </mat-card>
       </div>
     </div>
   </ng-template>
-</div>
+</div> -->
+<p>
+  cart works!
+</p>
+<div class="row" *ngFor="let item of cartItems">
+  <div class="col-sm-4">
+    <img src="{{item.image}}" style="height:100px; width:100px">
+  </div>
+  <div class="col-sm-4">
+    <b>Base Price:</b> &nbsp;{{item.price}}<br />
+    <b>Add On Price:</b> &nbsp;{{item.addOnPrice}}<br />
+    <b>Pizza Price:</b> &nbsp;{{item.total}}<br />
+    <b>Type:</b> &nbsp;{{item.type}}<br />
+    <b>Topping:</b>&nbsp;{{item.topping}}<br />
+    <div>
+      <div *ngIf="item.addOns == null; else elseBlock">
+        <b>No Extra Topping</b></div>
+      <ng-template #elseBlock>
+        <b>Extra Toppings:</b> &nbsp;{{item.addOns}}
+      </ng-template>
+    </div>
+    <div class="col-sm-4">
+      <button (click)="removeFromCart(item._id)" class="btn btn-danger" onclick="window.location.reload()">Remove your
+        pizza</button><br />
+    </div> <br />
+  </div>

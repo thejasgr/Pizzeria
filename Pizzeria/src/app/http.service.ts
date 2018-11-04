@@ -14,8 +14,8 @@ export class HttpService {
   getingredientsinfo() {
     return this.httpclient.get(this.url + 'getingredients');
   }
-  addToCart(pizzaid, ingredients) {
-    return this.httpclient.post(this.url + 'addToCart', { pizzaid, ingredients });
+  addToCart(pizzaid, ingredients, addOnPrice, total) {
+    return this.httpclient.post(this.url + 'addToCart', { 'id': pizzaid, 'topping': ingredients, 'addOnPrice': addOnPrice, 'total': total });
   }
   getCart() {
     return this.httpclient.get(this.url + 'getCart');

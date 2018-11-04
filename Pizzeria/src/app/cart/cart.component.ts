@@ -8,7 +8,7 @@ import { HttpService } from '../http.service';
 })
 export class CartComponent implements OnInit {
   isEmpty = true;
-  name;
+  /* name;
   img;
   description;
   ingredients: [];
@@ -34,11 +34,11 @@ export class CartComponent implements OnInit {
       for (const responseiterator of this.cartArray) {
         for (const iterator of this.pizzaArray) {
           if (responseiterator.pizzaid == iterator.id) {
-            this.displaycart.push(iterator);
+            this.displaycart.push([iterator, responseiterator.ingredients]);
             break;
           }
         }
-        this.displaycart.push(responseiterator.ingredients);
+        // this.displaycart.push(responseiterator.ingredients);
       }
 
       /* for (const iterator of this.cartArray) {
@@ -56,8 +56,25 @@ export class CartComponent implements OnInit {
 
       } */
 
-    });
-    console.log(this.displaycart);
+  /* });
+  console.log(this.displaycart);
+}
+*/
+  cartItems;
+
+  constructor(private httpService: HttpService) { }
+
+  ngOnInit() {
+    this.httpService.getCart().subscribe(
+      res => {
+        this.cartItems = res;
+        console.log(res);
+      }
+    );
+  }
+  removeFromCart() {
+
   }
 
 }
+
