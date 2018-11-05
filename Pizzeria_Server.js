@@ -1,6 +1,6 @@
 /*jslint node*/
 const express = require('express');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const app = express();
 const mongodb = require('mongodb');
 const jsonParser = bodyParser.json();
@@ -32,11 +32,42 @@ function dbOperation(req, res, flagValue) {
                 addToCart(req, res);
             } else if (flagValue == 'getCart') {
                 getCart(res);
+            } else if (flagValue == 'loginValidation') {
+                loginValidation(req, res);
             }
+
 
         }
     });
 }
+
+function loginValidation(req, res) {
+    if (db != null) {
+        console.log("hahah");
+        db.collection('userdetails').find({ userID: { $eq: req.body.userID } }, { userID: 1, password: 1 }).toArray(
+            function (err, result) {
+                if (err) {
+                    console.log('error');
+                }
+                else {
+                    console.log(result)
+                    console.log("no error" + req.body.password + "==" + result[0].password)
+                    if (req.body.password == result[0].password) {
+                        console.log('Successful Login')
+                        msg = { "status": true }
+                        res.send(msg);
+                    } else {
+                        console.log("password dont")
+                    }
+
+
+                }
+            }
+        );
+    }
+};
+
+
 function getCart(res) {
     console.log('connected cart data');
     if (db != null) {
@@ -112,7 +143,7 @@ function addToCart(req, res) {
             }
             else {
                 console.log("working");
-                console.log(typeof (req.body.id));
+                console.log(req.body.count);
 
                 db.collection('cart').insertOne({
                     "id": result[0].id,
@@ -123,7 +154,7 @@ function addToCart(req, res) {
                     "description": result[0].description,
                     "ingredients": result[0].ingredients,
                     "topping": result[0].topping.sort(1),
-                    "quant": 1,
+                    "quant": req.body.count,
                     "addOns": req.body.topping,
                     "addOnPrice": req.body.addOnPrice,
                     "total": req.body.total
@@ -135,16 +166,6 @@ function addToCart(req, res) {
         })
     }
 }
-/* function addToCart(req, res) {
-    if (db != null) {
-        db.collection('cart').insertOne({ 'pizzaid': req.body.pizzaid, 'ingredients': req.body.ingredients });
-        const result = { status: true, msg: 'post successful' };
-        res.send(result);
-    } else {
-        const result = { status: flase, msg: 'post unsuccessful' };
-        res.send(result);
-    }
-} */
 
 app.get('/getpizza', function (req, res) {
     dbOperation(req, res, 'getPizzaDetails');
@@ -161,5 +182,41 @@ app.post('/addToCart', jsonParser, function (req, res) {
 app.get('/getCart', function (req, res) {
     dbOperation(req, res, 'getCart');
 })
+
+
+app.post('/removeFromCart', jsonParser, function (req, res) {
+    mongoClient.connect(url, function (err, client) {
+
+        if (err) {
+
+            console.log('Unable to connect to the mongoDB server.Error:', err);
+        }
+        else {
+            console.log('connected remove from server');
+            console.log(typeof (req.body._id));
+            const db = client.db(dbName);
+            x = (req.body._id)
+            var o_id = new mongodb.ObjectID(req.body._id);
+            db.collection("cart").find({ "_id": o_id }).toArray(function (err, result) {
+                if (err) {
+                    res.send(err);
+                }
+
+                else {
+                    console.log(result)
+                    db.collection('cart').deleteOne({ "_id": result[0]._id });
+                }
+            })
+            console.log('removed from cart');
+        }
+    })
+    client.close();
+});
+
+app.post('/loginValidation', jsonParser, function (req, res) {
+    console.log(req.body);
+    dbOperation(req, res, 'loginValidation');
+});
+
 
 app.listen(3000, () => console.log('Server listening on port 3000'));

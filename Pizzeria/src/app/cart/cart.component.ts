@@ -8,59 +8,8 @@ import { HttpService } from '../http.service';
 })
 export class CartComponent implements OnInit {
   isEmpty = true;
-  /* name;
-  img;
-  description;
-  ingredients: [];
-  topping: [];
-  price;
-  type;
-  pizzaArray = new Array();
-  ingredientsArray;
-  cartArray;
-  displaycart = new Array();
-  constructor(private pizza: HttpService) { }
-
-  ngOnInit() {
-    this.pizza.getpizzainfo().subscribe((res: []) => {
-      this.pizzaArray = res;
-    });
-    this.pizza.getingredientsinfo().subscribe((resp) => {
-      this.ingredientsArray = resp;
-    });
-    this.pizza.getCart().subscribe((res) => {
-      this.cartArray = res;
-      console.log(res);
-      for (const responseiterator of this.cartArray) {
-        for (const iterator of this.pizzaArray) {
-          if (responseiterator.pizzaid == iterator.id) {
-            this.displaycart.push([iterator, responseiterator.ingredients]);
-            break;
-          }
-        }
-        // this.displaycart.push(responseiterator.ingredients);
-      }
-
-      /* for (const iterator of this.cartArray) {
-        for (const pizzaiterator of this.pizzaArray) {
-          if (iterator.pizzaorder[0] == pizzaiterator.name) {
-            this.displaycart.push(pizzaiterator);
-            break;
-          }
-        }
-        if (iterator.pizzaorder.length > 0) {
-          for (let index = 1; index < iterator.pizzaorder.length; index++) {
-            this.displaycart.push(iterator.pizzaorder[index]);
-          }
-        }
-
-      } */
-
-  /* });
-  console.log(this.displaycart);
-}
-*/
   cartItems;
+  grandTotal = 0;
 
   constructor(private httpService: HttpService) { }
 
@@ -68,12 +17,22 @@ export class CartComponent implements OnInit {
     this.httpService.getCart().subscribe(
       res => {
         this.cartItems = res;
-        console.log(res);
+        if (this.cartItems.length != 0) {
+          this.isEmpty = false;
+          for (let i = 0; i < this.cartItems.length; i++) {
+            this.grandTotal += this.cartItems[i].total + this.cartItems[i].addOnPrice;
+          }
+
+          console.log(res);
+        }
+
       }
     );
   }
-  removeFromCart() {
-
+  removeFromCart(_id) {
+    this.httpService.removeCartData(_id).subscribe(res => {
+      console.log(res);
+    });
   }
 
 }

@@ -1,57 +1,93 @@
-<div class="row">
-    <div *ngFor="let item of pizzaArray; let i=index;" class="col-sm-6">
-        <mat-card>
-            <div class=" row">
-                <div class='col-sm-3'>
-                    <mat-card-header>
-                        <mat-card-title>
-                            <h3> Name:</h3>
-                            {{item.name}} <br>
-                        </mat-card-title>
-                        <mat-card-subtitle>
-                            <div>
-                                <div *ngIf="item.type=='veg'; else elseBlock">
-                                    <img class="img-responsive" src="/assets/green.png" width="30" height="30" alt="Veg"></div>
-                                <ng-template #elseBlock>
-                                    <img class="img-responsive" src="/assets/red.png" width="30" height="30" alt="Non-Veg">
-                                </ng-template>
-                            </div>
-                            <h3>Price:</h3>
-                            {{item.price}}<br>
-                        </mat-card-subtitle>
-                    </mat-card-header>
-                </div>
-
-                <div class="col-sm-3">
-                    <mat-card-content>
-                        {{item.description}}<br>
-                        <h3>Ingredients:</h3>
-                        {{item.ingredients}} <br>
-                        <h3>Toppings:</h3><br>
-                        {{item.topping}}
-                    </mat-card-content>
-                </div>
-                <div class="col-sm-6">
-                    <img class="img-responsive" style="height:300px;width:300px;" src={{item.image}} /><br>
-                    <mat-card-actions>
-                        <button class="btn btn-danger col-sm-1" (click)="quantDecrease(item.id)">-</button>{{countArray[i]}}
-                        <button class="btn btn-success col-sm-1" (click)="quantIncrease(item.id)">+</button><br>
-
-                        <button (click)="addToCart(item.id)" class="btn btn-success col-sm-12">Add</button><br>
-                    </mat-card-actions>
-                </div>
-            </div>
-            <div class="row">
-                <div *ngFor="let element of ingredientsArray; let i=index">
-                    <mat-card-content>
-                        <div class="checkbox col-sm-2">
-                            <input type="checkbox" (change)="addToOrder($event.target.checked,item.id,element.tname ,element.price)">{{element.tname}}
-                        </div>
-                    </mat-card-content>
-                </div>
-            </div>
-        </mat-card>
+<div *ngIf="pizzaArray.length==0||ingredientsArray.length==0;else display">
+    <div class="row">
+        <mat-progress-spinner class="col-sm-offset-6" color="primary" mode="indeterminate">
+        </mat-progress-spinner>
     </div>
 </div>
-<br>
-<button type="button" class="btn btn-success pull-right" (click)="routeToCart()">Go to Cart</button>
+<ng-template #display>
+    <div class="row">
+        <div *ngFor="let item of pizzaArray; let i=index;" class="col-sm-12">
+            <mat-card>
+                <div class="row">
+                    <div class='col-sm-3'>
+                        <mat-card-header>
+                            <mat-card-title>
+                                <h3> Name:</h3>
+                                {{item.name}} <br>
+                            </mat-card-title>
+                            <mat-card-subtitle>
+                                <div>
+                                    <div *ngIf="item.type=='veg'; else elseBlock">
+                                        <img class="img-responsive" src="/assets/green.png" width="30" height="30" alt="Veg"></div>
+                                    <ng-template #elseBlock>
+                                        <img class="img-responsive" src="/assets/red.png" width="30" height="30" alt="Non-Veg">
+                                    </ng-template>
+                                </div>
+                                <h3>Base Pizza price:</h3>
+                                {{item.price|currency:'INR':true}}<br>
+                                <h3>Addon Price:</h3>
+
+                                <p>{{addonArray[i]|currency:'INR':true}}</p>
+
+                            </mat-card-subtitle>
+                        </mat-card-header>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <mat-card-content>
+                            {{item.description}}<br>
+                            <h3>Ingredients:</h3>
+                            {{item.ingredients}} <br>
+                            <h3>Toppings:</h3><br>
+                            {{item.topping}}
+                            <h3>Extra toppings:</h3><br>
+                            <div *ngIf="ingredienttopping[i]!=null; else block">
+                                <div *ngFor="let item1 of ingredienttopping[i]">
+                                    {{item1}}
+                                </div>
+                            </div>
+                            <ng-template #block>
+                                No Extra Toppings
+                            </ng-template>
+
+                        </mat-card-content>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="col-sm-offset-1">
+                            <img class="img-responsive col-sm-offset-1" style="height:300px;width:300px;" src={{item.image}}><br>
+                        </div>
+                        <mat-card-actions>
+                            <div class="col-sm-offset-4">
+                                <button mat-raised-button color='warn' style="font-size:85" class="col-sm-1" (click)="quantDecrease(item.id)">-</button>
+                                <span class="col-sm-1" style="font-size:200;align-content: center">{{countArray[i]}}
+                                </span>
+                                <button mat-raised-button style="background-color: rgb(24, 212, 24)" class="col-sm-1"
+                                    (click)="quantIncrease(item.id)">+</button><br>
+                            </div>
+                        </mat-card-actions>
+                        <mat-card-actions>
+                            <div class="col-sm-offset-4">
+                                <button mat-raised-button style="background-color: rgb(24, 212, 24)" (click)="addToCart(item.id)"
+                                    class="col-sm-6">Add</button><br>
+                            </div>
+                        </mat-card-actions>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div *ngFor="let element of ingredientsArray; let i=index">
+                        <mat-card-content>
+                            <div class="checkbox col-sm-2">
+                                <div>
+                                    <img src="{{element.image}}" alt="ingredient image" class="img-responsive" width="65"
+                                        height="65"></div>
+                                <!-- <mat-checkbox (click)="addToOrder($event.target.checked,item.id,element.tname ,element.price)">{{element.tname}}</mat-checkbox> -->
+                                <input type="checkbox" (change)="addToOrder($event.target.checked,item.id,element.tname ,element.price)">{{element.tname}}
+                            </div>
+                        </mat-card-content>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+</ng-template>

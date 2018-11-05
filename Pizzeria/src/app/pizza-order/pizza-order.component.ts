@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../http.service';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -9,42 +10,33 @@ import { Router } from '@angular/router';
   styleUrls: ['./pizza-order.component.css']
 })
 export class PizzaOrderComponent implements OnInit {
-  postresult;
-  name;
-  img;
-  description;
   ingredients: [];
   topping: [];
-  price;
-  type;
   pizzaArray = new Array();
-  ingredientsArray;
+  ingredientsArray = new Array();
   count = 0;
   countArray = new Array();
-  /*  pizzaCounter = new Array();
-  totalPizza: number; */
   ingredienttopping = new Array();
-  orderArray = new Array();  //
+  orderArray = new Array();
   addonArray = new Array();
   totalArray = new Array();
   quantArray = new Array();
+  checked: false;
 
 
 
-  constructor(private pizza: HttpService, private router: Router) { }
+  constructor(private pizza: HttpService, private router: Router, private toast: MatSnackBar) { }
 
   ngOnInit() {
     this.pizza.getpizzainfo().subscribe((res: []) => {
       this.pizzaArray = res;
       for (let i = 0; i < this.pizzaArray.length; i++) {
         this.countArray[i] = 1;
+        this.addonArray.push(0);
+        this.totalArray[i] = this.pizzaArray[i].price;
       }
-      /*     res.forEach(e => {
-            this.orderArray.push(this.count);
-            ++this.count;
-          }); */
     });
-    this.pizza.getingredientsinfo().subscribe((resp) => {
+    this.pizza.getingredientsinfo().subscribe((resp: []) => {
       this.ingredientsArray = resp;
     });
 
@@ -53,25 +45,17 @@ export class PizzaOrderComponent implements OnInit {
 
   }
   addToCart(pizzaid) {
-    var totalAddOnPrice = this.addonArray[pizzaid - 1] * this.countArray[pizzaid - 1];
-    var totalBasePrice = this.totalArray[pizzaid - 1] * this.countArray[pizzaid - 1];
+    this.toast.open('Added to cart', 'Okay', { duration: 3000 });
+    const totalAddOnPrice = this.addonArray[pizzaid - 1] * this.countArray[pizzaid - 1];
+    const totalBasePrice = this.totalArray[pizzaid - 1] * this.countArray[pizzaid - 1];
 
-    this.pizza.addToCart(pizzaid, this.ingredienttopping[pizzaid - 1], totalAddOnPrice, totalBasePrice).subscribe((res1) => {
-      console.log(res1);
-    });
+    this.pizza.addToCart(pizzaid, this.ingredienttopping[pizzaid - 1],
+      totalAddOnPrice, totalBasePrice, this.countArray[pizzaid - 1]).subscribe((res1) => {
+        console.log(res1);
+      });
 
   }
   addToOrder(status, pizzaid, ingName, price) {
-    /*  if (this.OrderArray.length == 0 && event.target.checked) {
-       this.OrderArray.push(pizzaname);
-       this.OrderArray.push(ingname);
-     } else if (event.target.checked) {
-       this.OrderArray.push(ingname);
-     } else if (!event.target.checked) {
-       const deleteindex = this.OrderArray.indexOf(ingname);
-       this.OrderArray.splice(deleteindex, 1);
-     } */
-
     console.log(status);
     console.log(this.orderArray);
     if (this.orderArray.length == 0) {
@@ -79,8 +63,6 @@ export class PizzaOrderComponent implements OnInit {
       for (let i = 0; i < this.pizzaArray.length; i++) {
         this.orderArray.push(i + 1);
         this.ingredienttopping.push([]);
-        this.addonArray[i] = 0;
-        this.totalArray[i] = this.pizzaArray[i].price;
 
       }
       console.log(this.orderArray);
@@ -89,18 +71,22 @@ export class PizzaOrderComponent implements OnInit {
 
     console.log(index);
     if (status) {
-      // this.total=basePrice+this.total+this.price;
+
       if (!(this.ingredienttopping[index].includes(ingName))) {
         this.ingredienttopping[index].push(ingName);
         this.addonArray[index] += price;
-        // this.totalArray[index] += price;
+
       }
       console.log(this.ingredienttopping);
     } else {
       if (this.ingredienttopping[index].includes(ingName)) {
-        this.ingredienttopping[index].splice(index, 1);
+        console.log('working' + index);
+        const ingIndex = this.ingredienttopping[index].indexOf(ingName);
+        this.ingredienttopping[index].splice(ingIndex, 1);
         this.addonArray[index] -= price;
-        // this.totalArray[index] -= price;
+        console.log(this.ingredienttopping);
+
+
       }
     }
   }
