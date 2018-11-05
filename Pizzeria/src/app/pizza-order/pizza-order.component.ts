@@ -30,6 +30,7 @@ export class PizzaOrderComponent implements OnInit {
   ngOnInit() {
     this.pizza.getpizzainfo().subscribe((res: []) => {
       this.pizzaArray = res;
+      console.log(res);
       for (let i = 0; i < this.pizzaArray.length; i++) {
         this.countArray[i] = 1;
         this.addonArray.push(0);
@@ -45,7 +46,7 @@ export class PizzaOrderComponent implements OnInit {
 
   }
   addToCart(pizzaid) {
-    this.toast.open('Added to cart', 'Okay', { duration: 3000 });
+    this.toast.open('Added to cart', 'Okay', { duration: 2000 });
     const totalAddOnPrice = this.addonArray[pizzaid - 1] * this.countArray[pizzaid - 1];
     const totalBasePrice = this.totalArray[pizzaid - 1] * this.countArray[pizzaid - 1];
 
